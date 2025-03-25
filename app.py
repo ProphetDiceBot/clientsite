@@ -32,7 +32,7 @@ def index():
     This route renders the main HTML page.
     """
     return render_template('index.html')
-
+##
 @app.route('/signup', methods=['POST'])
 def signup():
     """
@@ -42,12 +42,15 @@ def signup():
     name = data.get('name')
     email = data.get('email')
     password = data.get('password')
+    role = data.get('role')  # New field to specify the role (user or seller)
 
     # Validation
-    if not name or not email or not password:
+    if not name or not email or not password or not role:
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
     if not is_valid_email(email):
         return jsonify({'success': False, 'message': 'Invalid email format'}), 400
+    if role not in ['user', 'seller']:
+        return jsonify({'success': False, 'message': 'Invalid role specified'}), 400
 
     # Check if the email is already taken
     if mongo.db.users.find_one({'email': email}):
@@ -58,6 +61,7 @@ def signup():
         'name': name,
         'email': email,
         'password': hashed_password,
+        'role': role,  # Store the role in the user data
         'balance': 0.0  # Initialize user balance
     }
 
@@ -68,6 +72,7 @@ def signup():
     except Exception as e:
         print(f"Error creating user: {e}")
         return jsonify({'success': False, 'message': 'Failed to create user'}), 500
+##
 
 @app.route('/login', methods=['POST'])
 def login():
