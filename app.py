@@ -4,12 +4,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 from functools import wraps
 import re  # Import the regular expression module
-import datetime # Import datetime
+import datetime  # Import datetime
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = 'mongodb+srv://0p3nbullet:aiJ7QYL75t5pu0mo@prophetdice.8605b.mongodb.net/fiverr_clone_db'
 app.secret_key = 'your_secret_key'  # Set a secret key for sessions
 mongo = PyMongo(app)
+
 
 # Decorator for routes that require login
 def login_required(f):
@@ -20,11 +21,14 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 def is_valid_email(email):
     """
     Validates the email format using a regular expression.
     """
-    return email is not None
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
+
+
 
 @app.route('/')
 def index():
@@ -33,6 +37,7 @@ def index():
     """
     return render_template('index.html')
 ##
+
 @app.route('/signup', methods=['POST'])
 def signup():
     """
@@ -268,7 +273,7 @@ def purchase_gig():
         print(f"Error recording purchase: {e}")
         return jsonify({'success': False, 'message': 'Failed to record purchase'}), 500
     
-     # Update gig status to 'sold' 
+    # Update gig status to 'sold'
     try:
         mongo.db.gigs.update_one({'_id': gig_id}, {'$set': {'status': 'sold'}})
     except Exception as e:
@@ -388,4 +393,4 @@ def dashboard_page():
     
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
