@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiverr Clone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        /* Custom CSS for header to ensure it stands out */
+        .header {
+            background: linear-gradient(to right, #1dbf73, #08a462); /* Gradient background */
+        }
+        .header-shadow {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+        }
+        .fiverr-button {
+            background-color: #1dbf73; /* Fiverr green */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600; /* Make the button text bold */
+        }
+
+        .fiverr-button:hover {
+            background-color: #08a462; /* Darker shade on hover */
+        }
+
+        .card {
+             background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .gig-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.2s ease-in-out; /* Add smooth transition */
+        }
+
+        .gig-card:hover {
+             transform: translateY(-5px); /* Move card up slightly on hover */
+        }
+
+       .gig-image {
+            width: 100%;
+            height: 200px; /* Fixed height for consistency */
+            object-fit: cover; /* Ensure image covers the entire container */
+            border-radius: 8px 8px 0 0; /* Rounded corners for top of image */
+        }
+        .gig-details {
+            padding: 15px;
+        }
+
+        .star-rating {
+            color: #FFC107; /* Star color (Fiverr's yellow) */
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="header header-shadow sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-white text-2xl font-bold font-serif">
+                <span class="text-yellow-400">F</span>iverr
+            </a>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-6">
+                    <li><a href="#services" class="text-white hover:text-gray-200 transition duration-300">Services</a></li>
+                    <li><a href="#how-it-works" class="text-white hover:text-gray-200 transition duration-300">How It Works</a></li>
+                    <li><a href="#testimonials" class="text-white hover:text-gray-200 transition duration-300">Testimonials</a></li>
+                    <li><a href="#login" class="text-white hover:text-gray-200 transition duration-300">Login</a></li>
+                    <li><a href="#signup" class="text-white hover:text-gray-200 transition duration-300">Signup</a></li>
+                </ul>
+            </nav>
+            <button id="signup-btn" class="fiverr-button">Become a Seller</button>
+        </div>
+    </header>
+
+    <section class="bg-gradient-to-br from-purple-700 to-blue-600 text-white text-center py-20">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">Find the perfect freelance services for your business</h1>
+            <p class="text-lg mb-8">Connect with top freelancers and get your projects done.</p>
+            <input type="text" placeholder="Search for services..." class="w-full md:w-1/2 px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+    </section>
+
+    <section id="services" class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">Popular Services</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="gig-card">
+                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 1" class="gig-image">
+                <div class="gig-details">
+                    <h3 class="text-xl font-semibold mb-2">I will design a professional logo</h3>
+                    <p class="text-gray-600 mb-2">by Jane Smith</p>
+                    <div class="flex items-center mb-2">
+                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                        <span class="ml-1 text-gray-500">(120)</span>
+                    </div>
+                    <p class="text-gray-700 font-bold">Starting at $50</p>
+                </div>
+            </div>
+            <div class="gig-card">
+                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 2" class="gig-image">
+                 <div class="gig-details">
+                    <h3 class="text-xl font-semibold mb-2">I will develop a responsive website</h3>
+                    <p class="text-gray-600 mb-2">by John Doe</p>
+                    <div class="flex items-center mb-2">
+                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        <span class="ml-1 text-gray-500">(235)</span>
+                    </div>
+                    <p class="text-gray-700 font-bold">Starting at $100</p>
+                </div>
+            </div>
+            <div class="gig-card">
+                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 3" class="gig-image">
+                <div class="gig-details">
+                    <h3 class="text-xl font-semibold mb-2">I will write engaging articles</h3>
+                    <p class="text-gray-600 mb-2">by Sarah Williams</p>
+                    <div class="flex items-center mb-2">
+                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        <span class="ml-1 text-gray-500">(95)</span>
+                    </div>
+                    <p class="text-gray-700 font-bold">Starting at $30</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="bg-gray-50 py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <i class="fas fa-search text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Find a service</h3>
+                    <p class="text-gray-600">Search for the perfect service for your project.</p>
+                </div>
+                <div>
+                    <i class="fas fa-handshake text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Hire a freelancer</h3>
+                    <p class="text-gray-600">Review profiles, compare prices, and hire your favorite freelancer.</p>
+                </div>
+                <div>
+                    <i class="fas fa-check-circle text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Get it done</h3>
+                    <p class="text-gray-600">Receive your completed project and provide feedback.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="bg-purple-100 py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">Testimonials</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card">
+                    <p class="text-gray-700 italic mb-4">"I found the perfect freelancer for my logo design. The process was smooth and the quality of work was outstanding!"</p>
+                    <p class="font-semibold text-gray-800">- Michael B.</p>
+                </div>
+                <div class="card">
+                    <p class="text-gray-700 italic mb-4">"Using Fiverr made it easy to find a skilled web developer. I'm very happy with the final result."</p>
+                    <p class="font-semibold text-gray-800">- Jessica L.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="login-modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h2 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Login to Your Fiverr Account
+                            </h2>
+                            <form id="login-form" class="mt-4 space-y-4">
+                                <div>
+                                    <label for="login-email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                                    <input type="email" id="login-email" name="email" placeholder="Enter your email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <div id="login-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                </div>
+                                <div>
+                                    <label for="login-password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                                    <input type="password" id="login-password" name="password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <div id="login-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                </div>
+                                <button type="submit" class="fiverr-button w-full">Login</button>
+                            </form>
+                            <div id="login-error" class="mt-4 text-red-500 text-center" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h2 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Create a Fiverr Account
+                            </h2>
+                            <form id="signup-form" class="mt-4 space-y-4">
+                                <div>
+                                    <label for="signup-name" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                                    <input type="text" id="signup-name" name="name" placeholder="Enter your full name" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <div id="signup-name-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                </div>
+                                <div>
+                                    <label for="signup-email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                     <div id="signup-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                </div>
+                                <div>
+                                    <label for="signup-password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                                    <input type="password" id="signup-password" name="password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <div id="signup-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                </div>
+                                <button type="submit" class="fiverr-button w-full">Signup</button>
+                            </form>
+                            <div id="signup-error" class="mt-4 text-red-500 text-center" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 Fiverr Clone. All rights reserved.</p>
+            <p>
+                <a href="#" class="text-gray-300 hover:text-white transition duration-300 mr-4">Terms of Service</a>
+                <a href="#" class="text-gray-300 hover:text-white transition duration-300">Privacy Policy</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script> <script>
+        $(document).ready(function() {
+            // --- Modal functionality ---
+            const loginModal = $('#login-modal');
+            const signupModal = $('#signup-modal');
+            const loginButtons = $('a[href="#login"]'); // Select the anchor tag
+            const signupButtons = $('a[href="#signup"], #signup-btn'); // Select both anchor and button
+            const closeButtons = $('.close-button');
+
+            loginButtons.on('click', function(e) {
+                e.preventDefault(); // Prevent default anchor behavior
+                loginModal.removeClass('hidden');
+                $('body').addClass('overflow-hidden'); // Prevent scrolling
+            });
+
+            signupButtons.on('click', function(e) {
+                e.preventDefault(); // Prevent default anchor behavior
+                signupModal.removeClass('hidden');
+                $('body').addClass('overflow-hidden');
+            });
+
+            closeButtons.on('click', function() {
+                loginModal.addClass('hidden');
+                signupModal.addClass('hidden');
+                $('body').removeClass('overflow-hidden');
+            });
+
+            // --- Form Validation and Submission ---
+            $('#login-form').on('submit', function(e) {
+                e.preventDefault();
+                let hasErrors = false;
+
+                // Reset error messages
+                $('#login-email-error').hide();
+                $('#login-password-error').hide();
+                $('#login-error').hide();
+
+                const email = $('#login-email').val().trim();
+                const password = $('#login-password').val().trim();
+
+                // Email validation (very basic)
+                if (!email) {
+                    $('#login-email-error').text('Email is required').show();
+                    hasErrors = true;
+                } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+                    $('#login-email-error').text('Invalid email format').show();
+                    hasErrors = true;
+                }
+
+                if (!password) {
+                    $('#login-password-error').text('Password is required').show();
+                    hasErrors = true;
+                }
+
+                if (hasErrors) {
+                    return; // Stop submission if there are errors
+                }
+
+                //  AJAX call to your Flask backend
+                $.ajax({
+                    url: '/login',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ email: email, password: password }),
+                    success: function(response) {
+                        if (response.success) {
+                            //  redirect
+                            window.location.href = '/dashboard';
+                        } else {
+                            $('#login-error').text(response.message || 'Invalid credentials').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Login error:", xhr, status, error);
+                        $('#login-error').text('An error occurred. Please try again later.').show();
+                    }
+                });
+            });
+
+            $('#signup-form').on('submit', function(e) {
+                e.preventDefault();
+                let hasErrors = false;
+
+                // Reset error messages
+                $('#signup-name-error').hide();
+                $('#signup-email-error').hide();
+                $('#signup-password-error').hide();
+                $('#signup-error').hide();
+
+                const name = $('#signup-name').val().trim();
+                const email = $('#signup-email').val().trim();
+                const password = $('#signup-password').val().trim();
+
+                // Name validation
+                if (!name) {
+                    $('#signup-name-error').text('Name is required').show();
+                    hasErrors = true;
+                }
+
+                // Email validation (very basic)
+                 if (!email) {
+                    $('#signup-email-error').text('Email is required').show();
+                    hasErrors = true;
+                } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+                    $('#signup-email-error').text('Invalid email format').show();
+                    hasErrors = true;
+                }
+
+                if (!password) {
+                    $('#signup-password-error').text('Password is required').show();
+                    hasErrors = true;
+                }
+
+                if (hasErrors) {
+                    return; // Stop submission if there are errors
+                }
+
+                //  AJAX call to your Flask backend
+                $.ajax({
+                    url: '/signup',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ name: name, email: email, password: password }),
+                    success: function(response) {
+                        if (response.success) {
+                            //  redirect
+                            window.location.href = '/dashboard';
+                        } else {
+                            $('#signup-error').text(response.message || 'Failed to sign up.').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Signup error:", xhr, status, error);
+                        $('#signup-error').text('An error occurred. Please try again later.').show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
