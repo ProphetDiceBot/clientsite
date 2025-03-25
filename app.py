@@ -11,7 +11,7 @@ import os      # Import os to access environment variables
 
 # --- Flask App Configuration ---
 app = Flask(__name__)
-app.config['MONGO_URI'] = os.environ.get('MONGO_URI', 'mongodb+srv://0p3nbullet:aiJ7QYL75t5pu0mo@prophetdice.8605b.mongodb.net/fiverr_clone_db')
+app.config['MONGO_URI'] = 'mongodb+srv://0p3nbullet:aiJ7QYL75t5pu0mo@prophetdice.8605b.mongodb.net/fiverr_clone_db'
 # IMPORTANT: Use a strong, random secret key and store it securely (e.g., environment variable)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'fallback_super_secret_key_for_dev') # Use environment variable or a fallback
 mongo = PyMongo(app)
