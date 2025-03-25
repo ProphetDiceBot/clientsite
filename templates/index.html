@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ByeByeIssue</title>
+    <!-- Update Title if needed -->
+    <title>Fiverr Clone - Find Freelance Services</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script> <style>
-        /* Custom CSS for header to ensure it stands out */
+    <!-- Using Tailwind Play CDN for simplicity, consider installing Tailwind for production -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Replace with your actual Font Awesome Kit URL or remove if not used -->
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+    <style>
+        /* Custom CSS for header */
         .header {
             background: linear-gradient(to right, #1dbf73, #08a462); /* Gradient background */
         }
         .header-shadow {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better separation */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .fiverr-button {
             background-color: #1dbf73; /* Fiverr green */
@@ -22,7 +26,9 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             font-family: 'Inter', sans-serif;
-            font-weight: 600; /* Make the button text bold */
+            font-weight: 600;
+            border: none; /* Ensure button look */
+            text-align: center;
         }
 
         .fiverr-button:hover {
@@ -42,90 +48,129 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
-            transition: transform 0.2s ease-in-out; /* Add smooth transition */
+            transition: transform 0.2s ease-in-out;
+            overflow: hidden; /* Ensure image corners are clipped */
         }
 
         .gig-card:hover {
-            transform: translateY(-5px); /* Move card up slightly on hover */
+            transform: translateY(-5px);
         }
 
         .gig-image {
             width: 100%;
-            height: 200px; /* Fixed height for consistency */
-            object-fit: cover; /* Ensure image covers the entire container */
-            border-radius: 8px 8px 0 0; /* Rounded corners for top of image */
+            height: 200px;
+            object-fit: cover;
+            /* Removed top radius here as overflow:hidden on parent handles it */
         }
         .gig-details {
             padding: 15px;
         }
 
         .star-rating {
-            color: #FFC107; /* Star color (Fiverr's yellow) */
+            color: #FFC107;
+        }
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* Style for error messages */
+        .error-message {
+             display: none; /* Hide by default */
+             color: #e53e3e; /* Red color */
+             font-size: 0.875rem; /* text-sm */
+             margin-top: 0.25rem; /* mt-1 */
         }
 
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
-    <header class="header header-shadow sticky top-0 z-10">
+    <!-- Header: Updated with conditional links -->
+    <header class="header header-shadow sticky top-0 z-30"> <!-- Increased z-index -->
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="#" class="text-white text-2xl font-bold font-serif">
-                <span class="text-yellow-400">F</span>iverr
+            <!-- Link logo to home -->
+            <a href="{{ url_for('index') }}" class="text-white text-2xl font-bold font-serif">
+                <span class="text-yellow-400">F</span>iverr <!-- Adjust name if needed -->
             </a>
-            <nav class="hidden md:block">
-                <ul class="flex space-x-6">
-                    <li><a href="#services" class="text-white hover:text-gray-200 transition duration-300">Services</a></li>
-                    <li><a href="#how-it-works" class="text-white hover:text-gray-200 transition duration-300">How It Works</a></li>
-                    <li><a href="#testimonials" class="text-white hover:text-gray-200 transition duration-300">Testimonials</a></li>
-                    <li><a href="#login" class="text-white hover:text-gray-200 transition duration-300">Login</a></li>
-                    <li><a href="#signup" class="text-white hover:text-gray-200 transition duration-300">Signup</a></li>
-                </ul>
+            <nav class="hidden md:flex items-center space-x-6">
+                <!-- Standard Nav Links -->
+                <a href="#services" class="text-white hover:text-gray-200 transition duration-300">Services</a>
+                <a href="#how-it-works" class="text-white hover:text-gray-200 transition duration-300">How It Works</a>
+                <a href="#testimonials" class="text-white hover:text-gray-200 transition duration-300">Testimonials</a>
+
+                <!-- Conditional Auth Links -->
+                {% if user %}
+                    <!-- User is logged in -->
+                    <a href="{{ url_for('dashboard') }}" class="text-white hover:text-gray-200 transition duration-300">Dashboard</a>
+                    <a href="{{ url_for('logout') }}" class="text-white hover:text-gray-200 transition duration-300">Logout</a>
+                    <span class="text-white">Welcome, {{ user.name }}!</span>
+                {% else %}
+                    <!-- User is not logged in -->
+                    <a href="#" id="login-link" class="text-white hover:text-gray-200 transition duration-300">Login</a>
+                    <a href="#" id="signup-link" class="fiverr-button">Join</a> <!-- Changed Signup to Join -->
+                {% endif %}
             </nav>
-            <button id="signup-btn" class="fiverr-button">Become a Seller</button>
+            <!-- Mobile Menu Button (Optional) -->
+            <div class="md:hidden">
+                 <!-- Add a hamburger icon button here to toggle mobile menu -->
+            </div>
+             <!-- "Become a Seller" Button: Triggers signup modal if not logged in -->
+            {% if not user %}
+            <button id="become-seller-btn" class="fiverr-button hidden md:block">Become a Seller</button>
+            {% endif %}
+
         </div>
     </header>
 
+    <!-- Hero Section -->
     <section class="bg-gradient-to-br from-purple-700 to-blue-600 text-white text-center py-20">
         <div class="container mx-auto px-4">
             <h1 class="text-4xl md:text-6xl font-bold mb-4">Find the perfect freelance services for your business</h1>
             <p class="text-lg mb-8">Connect with top freelancers and get your projects done.</p>
-            <input type="text" placeholder="Search for services..." class="w-full md:w-1/2 px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <!-- Add search functionality later -->
+            <input type="text" placeholder="Search for services..." class="w-full md:w-1/2 px-4 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
     </section>
 
+    <!-- Services Section -->
     <section id="services" class="container mx-auto px-4 py-16">
         <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">Popular Services</h2>
+        <!-- Grid for Gigs -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Example Gig Card (Repeat or fetch dynamically) -->
             <div class="gig-card">
-                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 1" class="gig-image">
+                <img src="https://via.placeholder.com/400x200/1dbf73/ffffff?text=Logo+Design" alt="Gig 1" class="gig-image"> <!-- Placeholder image -->
                 <div class="gig-details">
                     <h3 class="text-xl font-semibold mb-2">I will design a professional logo</h3>
                     <p class="text-gray-600 mb-2">by Jane Smith</p>
                     <div class="flex items-center mb-2">
-                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                        <span class="star-rating">★★★★☆</span>
                         <span class="ml-1 text-gray-500">(120)</span>
                     </div>
                     <p class="text-gray-700 font-bold">Starting at $50</p>
                 </div>
             </div>
+            <!-- Add more gig cards here -->
             <div class="gig-card">
-                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 2" class="gig-image">
+                <img src="https://via.placeholder.com/400x200/3498db/ffffff?text=Web+Development" alt="Gig 2" class="gig-image">
                 <div class="gig-details">
                     <h3 class="text-xl font-semibold mb-2">I will develop a responsive website</h3>
                     <p class="text-gray-600 mb-2">by John Doe</p>
                     <div class="flex items-center mb-2">
-                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        <span class="star-rating">★★★★★</span>
                         <span class="ml-1 text-gray-500">(235)</span>
                     </div>
                     <p class="text-gray-700 font-bold">Starting at $100</p>
                 </div>
             </div>
             <div class="gig-card">
-                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 3" class="gig-image">
+                <img src="https://via.placeholder.com/400x200/f39c12/ffffff?text=Article+Writing" alt="Gig 3" class="gig-image">
                 <div class="gig-details">
                     <h3 class="text-xl font-semibold mb-2">I will write engaging articles</h3>
                     <p class="text-gray-600 mb-2">by Sarah Williams</p>
                     <div class="flex items-center mb-2">
-                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        <span class="star-rating">★★★★★</span>
                         <span class="ml-1 text-gray-500">(95)</span>
                     </div>
                     <p class="text-gray-700 font-bold">Starting at $30</p>
@@ -134,291 +179,461 @@
         </div>
     </section>
 
+    <!-- How It Works Section -->
     <section id="how-it-works" class="bg-gray-50 py-16">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">How It Works</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div>
-                    <i class="fas fa-search text-4xl text-blue-500 mb-4"></i>
-                    <h3 class="text-xl font-semibold mb-2">Find a service</h3>
-                    <p class="text-gray-600">Search for the perfect service for your project.</p>
+                    <i class="fas fa-search text-4xl text-blue-500 mb-4"></i> <!-- Font Awesome Icon -->
+                    <h3 class="text-xl font-semibold mb-2">1. Find a service</h3>
+                    <p class="text-gray-600">Search or browse categories to find the perfect service.</p>
                 </div>
                 <div>
-                    <i class="fas fa-handshake text-4xl text-blue-500 mb-4"></i>
-                    <h3 class="text-xl font-semibold mb-2">Hire a freelancer</h3>
-                    <p class="text-gray-600">Review profiles, compare prices, and hire your favorite freelancer.</p>
+                    <i class="fas fa-handshake text-4xl text-blue-500 mb-4"></i> <!-- Font Awesome Icon -->
+                    <h3 class="text-xl font-semibold mb-2">2. Hire a freelancer</h3>
+                    <p class="text-gray-600">Review profiles, compare prices, and place your order.</p>
                 </div>
                 <div>
-                    <i class="fas fa-check-circle text-4xl text-blue-500 mb-4"></i>
-                    <h3 class="text-xl font-semibold mb-2">Get it done</h3>
-                    <p class="text-gray-600">Receive your completed project and provide feedback.</p>
+                    <i class="fas fa-check-circle text-4xl text-blue-500 mb-4"></i> <!-- Font Awesome Icon -->
+                    <h3 class="text-xl font-semibold mb-2">3. Get it done</h3>
+                    <p class="text-gray-600">Communicate with your seller and approve the final delivery.</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Testimonials Section -->
     <section id="testimonials" class="bg-purple-100 py-16">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">Testimonials</h2>
+            <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">What People Say</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="card">
-                    <p class="text-gray-700 italic mb-4">"I found the perfect freelancer for my logo design. The process was smooth and the quality of work was outstanding!"</p>
+                    <p class="text-gray-700 italic mb-4">"Found the perfect logo designer in minutes. The platform is intuitive and the results exceeded my expectations!"</p>
                     <p class="font-semibold text-gray-800">- Michael B.</p>
                 </div>
                 <div class="card">
-                    <p class="text-gray-700 italic mb-4">"Using Fiverr made it easy to find a skilled web developer. I'm very happy with the final result."</p>
+                    <p class="text-gray-700 italic mb-4">"Needed a quick website fix. Hired a developer through the platform and it was done professionally within hours. Highly recommend!"</p>
                     <p class="font-semibold text-gray-800">- Jessica L.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <div id="login-modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed z-50 inset-0 overflow-y-auto hidden"> <!-- Increased z-index -->
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                <div class="absolute inset-0 bg-gray-600 opacity-75"></div>
             </div>
-
+            <!-- Modal panel -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
             <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h2 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Login to Your Fiverr Account
-                            </h2>
-                            <form id="login-form" class="mt-4 space-y-4">
+                    <div class="sm:flex sm:items-start w-full">
+                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                                Login
+                            </h3>
+                            <!-- Login Form -->
+                            <form id="login-form" class="space-y-4">
+                                <!-- General Error Message Area -->
+                                <div id="login-error-general" class="error-message text-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert" style="display: none;">
+                                  <strong class="font-bold">Error:</strong>
+                                  <span class="block sm:inline"></span>
+                                </div>
+                                <!-- Email Input -->
                                 <div>
-                                    <label for="login-email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                                    <input type="email" id="login-email" placeholder="Enter your email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                    <div id="login-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                    <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" id="login-email" name="email" placeholder="Enter your email" required
+                                           class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <div id="login-email-error" class="error-message"></div>
                                 </div>
+                                <!-- Password Input -->
                                 <div>
-                                    <label for="login-password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                                    <input type="password" id="login-password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                    <div id="login-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                                    <input type="password" id="login-password" name="password" placeholder="Enter your password" required
+                                           class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <div id="login-password-error" class="error-message"></div>
                                 </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="login-remember" class="mr-2">
-                                    <label for="login-remember" class="text-gray-700 text-sm">Remember me</label>
+                                <!-- Remember Me (Optional) -->
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <input id="login-remember" name="remember" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                        <label for="login-remember" class="ml-2 block text-sm text-gray-900">Remember me</label>
+                                    </div>
+                                    <!-- Add Forgot Password link later if needed -->
                                 </div>
-                                <button type="submit" class="fiverr-button w-full">Login</button>
+                                <!-- Submit Button -->
+                                <div>
+                                    <button type="submit" class="w-full fiverr-button py-2">Login</button>
+                                </div>
                             </form>
-                            <div id="login-error" class="mt-4 text-red-500 text-center" style="display: none;"></div>
                         </div>
                     </div>
                 </div>
+                <!-- Modal Footer -->
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button">
                         Cancel
+                    </button>
+                    <!-- Link to Signup Modal -->
+                     <button type="button" id="go-to-signup" class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-transparent text-base font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Don't have an account? Join
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="signup-modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="fixed z-50 inset-0 overflow-y-auto hidden"> <!-- Increased z-index -->
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                <div class="absolute inset-0 bg-gray-600 opacity-75"></div>
             </div>
-
+            <!-- Modal panel -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
             <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h2 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Create a Fiverr Account
-                            </h2>
-                            <form id="signup-form" class="mt-4 space-y-4">
-                                <div>
-                                    <label for="signup-name" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
-                                    <input type="text" id="signup-name" placeholder="Enter your full name" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                    <div id="signup-name-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                    <div class="sm:flex sm:items-start w-full">
+                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title-signup">
+                                Join Fiverr Clone <!-- Update Name -->
+                            </h3>
+                            <!-- Signup Form -->
+                            <form id="signup-form" class="space-y-4">
+                                <!-- General Error Message Area -->
+                                <div id="signup-error-general" class="error-message text-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert" style="display: none;">
+                                  <strong class="font-bold">Error:</strong>
+                                  <span class="block sm:inline"></span>
                                 </div>
+                                <!-- Name Input -->
                                 <div>
-                                    <label for="signup-email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                                    <input type="email" id="signup-email" placeholder="Enter your email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                    <div id="signup-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                    <label for="signup-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                                    <input type="text" id="signup-name" name="name" placeholder="Enter your full name" required
+                                           class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <div id="signup-name-error" class="error-message"></div>
                                 </div>
+                                <!-- Email Input -->
                                 <div>
-                                    <label for="signup-password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                                    <input type="password" id="signup-password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                    <div id="signup-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                    <label for="signup-email" class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required
+                                           class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <div id="signup-email-error" class="error-message"></div>
                                 </div>
+                                <!-- Password Input -->
                                 <div>
-                                    <label for="signup-role" class="block text-gray-700 text-sm font-bold mb-2">Role</label>
-                                    <select id="signup-role" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                        <option value="">Select Role</option>
-                                        <option value="buyer">Buyer</option>
-                                        <option value="seller">Seller</option>
+                                    <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                                    <input type="password" id="signup-password" name="password" placeholder="Choose a password" required
+                                           class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <div id="signup-password-error" class="error-message"></div>
+                                </div>
+                                <!-- Role Selection -->
+                                <div>
+                                    <label for="signup-role" class="block text-sm font-medium text-gray-700">Account Type</label>
+                                    <select id="signup-role" name="role" required
+                                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                        <option value="" disabled selected>Select account type...</option>
+                                        <!-- Use 'user' for the buyer/general user role -->
+                                        <option value="user">Buyer (Find Services)</option>
+                                        <option value="seller">Seller (Offer Services)</option>
                                     </select>
-                                    <div id="signup-role-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                    <div id="signup-role-error" class="error-message"></div>
                                 </div>
-                                <button type="submit" class="fiverr-button w-full">Signup</button>
+                                <!-- Submit Button -->
+                                <div>
+                                    <button type="submit" class="w-full fiverr-button py-2">Join Now</button>
+                                </div>
                             </form>
-                            <div id="signup-error" class="mt-4 text-red-500 text-center" style="display: none;"></div>
                         </div>
                     </div>
                 </div>
+                 <!-- Modal Footer -->
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button">
                         Cancel
+                    </button>
+                     <!-- Link to Login Modal -->
+                     <button type="button" id="go-to-login" class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-transparent text-base font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Already have an account? Login
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="bg-gray-800 text-white py-6">
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-4 text-center">
-            <p>&copy; 2025 ByeByeIssue. All rights reserved.</p>
-            <p>
-                <a href="#" class="text-gray-300 hover:text-white transition duration-300 mr-4">Terms of Service</a>
-                <a href="#" class="text-gray-300 hover:text-white transition duration-300">Privacy Policy</a>
+             <!-- Add Footer Links Later -->
+            <p>© {{ current_year }} Fiverr Clone. All rights reserved.</p> <!-- Use current year dynamically -->
+            <p class="mt-2">
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300 mr-4">Terms of Service</a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300">Privacy Policy</a>
             </p>
         </div>
     </footer>
 
+    <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             // --- Modal functionality ---
             const loginModal = $('#login-modal');
             const signupModal = $('#signup-modal');
-            const loginButtons = $('a[href="#login"]'); // Select the anchor tag
-            const signupButtons = $('a[href="#signup"], #signup-btn'); // Select both anchor and button
+            const loginLink = $('#login-link'); // Link in header
+            const signupLink = $('#signup-link'); // Link in header
+            const becomeSellerBtn = $('#become-seller-btn'); // Button in header
             const closeButtons = $('.close-button');
+            const goToSignupBtn = $('#go-to-signup'); // Button in login modal footer
+            const goToLoginBtn = $('#go-to-login');   // Button in signup modal footer
 
-            loginButtons.on('click', function(e) {
+            function openModal(modal) {
+                modal.removeClass('hidden');
+                $('body').addClass('modal-open');
+            }
+
+            function closeModal(modal) {
+                modal.addClass('hidden');
+                // Only remove modal-open if no other modals are open (though unlikely here)
+                if ($('.fixed.z-50:not(.hidden)').length === 0) {
+                    $('body').removeClass('modal-open');
+                }
+                // Clear previous errors when closing
+                modal.find('.error-message').hide().text('');
+                modal.find('form')[0]?.reset(); // Reset form fields
+            }
+
+            loginLink.on('click', function(e) {
                 e.preventDefault();
-                loginModal.removeClass('hidden');
-                $('body').addClass('overflow-hidden'); // Prevent scrolling
+                openModal(loginModal);
             });
 
-            signupButtons.on('click', function(e) {
-                e.preventDefault(); // Prevent default anchor behavior
-                signupModal.removeClass('hidden');
-                $('body').addClass('overflow-hidden');
+            // Combine triggers for signup modal
+            signupLink.add(becomeSellerBtn).on('click', function(e) {
+                e.preventDefault();
+                openModal(signupModal);
             });
 
             closeButtons.on('click', function() {
-                loginModal.addClass('hidden');
-                signupModal.addClass('hidden');
-                $('body').removeClass('overflow-hidden');
+                // Find the closest modal parent and close it
+                closeModal($(this).closest('.fixed.z-50'));
             });
 
-            // --- Form Validation and Submission (Simplified) ---
+            // Switch between modals
+            goToSignupBtn.on('click', function() {
+                closeModal(loginModal);
+                openModal(signupModal);
+            });
+
+            goToLoginBtn.on('click', function() {
+                closeModal(signupModal);
+                openModal(loginModal);
+            });
+
+            // Close modal if clicking on the background overlay
+            $('.fixed.z-50').on('click', function(e) {
+                // Check if the click is directly on the overlay (the modal container itself)
+                if ($(e.target).is($(this))) {
+                    closeModal($(this));
+                }
+            });
+
+            // --- Form Validation and Submission ---
+
+            // Helper to display errors
+            function showError(fieldId, message) {
+                $(`#${fieldId}-error`).text(message).show();
+                $(`#${fieldId}`).addClass('border-red-500 focus:border-red-500 focus:ring-red-500'); // Add red border
+            }
+            // Helper to display general form error
+            function showGeneralError(formId, message) {
+                $(`#${formId}-error-general`).show().find('span').text(message);
+            }
+
+             // Helper to clear errors
+            function clearErrors(form) {
+                form.find('.error-message').hide().text('');
+                form.find('input, select').removeClass('border-red-500 focus:border-red-500 focus:ring-red-500'); // Remove red border
+                form.find('.error-message[role="alert"]').hide(); // Hide general error
+            }
+
+             // Email validation regex (basic)
+            function isValidEmail(email) {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                return emailRegex.test(email);
+            }
+
+            // Login Form Submission
             $('#login-form').on('submit', function(e) {
                 e.preventDefault();
+                clearErrors($(this)); // Clear previous errors
                 let hasErrors = false;
-
-                // Reset error messages
-                $('#login-email-error').hide();
-                $('#login-password-error').hide();
-                $('#login-error').hide();
 
                 const email = $('#login-email').val().trim();
                 const password = $('#login-password').val().trim();
 
-                // Email validation (very basic)
                 if (!email) {
-                    $('#login-email-error').text('Email is required').show();
+                    showError('login-email', 'Email is required');
                     hasErrors = true;
-                } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-                    $('#login-email-error').text('Invalid email format').show();
+                } else if (!isValidEmail(email)) {
+                    showError('login-email', 'Invalid email format');
                     hasErrors = true;
                 }
 
                 if (!password) {
-                    $('#login-password-error').text('Password is required').show();
+                    showError('login-password', 'Password is required');
                     hasErrors = true;
                 }
 
                 if (hasErrors) {
-                    return; // Stop submission if there are errors
+                    return; // Stop submission
                 }
 
-                // Simulate a login request (replace with actual AJAX call to your server)
+                // Disable button to prevent double submission
+                const submitButton = $(this).find('button[type="submit"]');
+                submitButton.prop('disabled', true).text('Logging in...');
+
+                // AJAX call (sending as form data)
                 $.ajax({
-                    url: '/login', //  Endpoint
+                    url: "{{ url_for('login_page') }}", // Use url_for for the endpoint
                     method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ email: email, password: password }),
-                    success: function(response) {
-                        if (response.success) {
-                            //  redirect
-                            window.location.href = '/dashboard'; //  dashboard
-                        } else {
-                            $('#login-error').text(response.message || 'Invalid credentials').show();
-                        }
+                    // Data sent as application/x-www-form-urlencoded by default
+                    data: {
+                        email: email,
+                        password: password
+                        // 'remember': $('#login-remember').is(':checked') // Add if backend handles it
                     },
-                    error: function() {
-                        $('#login-error').text('An error occurred. Please try again later.').show();
+                    success: function(response, status, xhr) {
+                        // Check if the server indicates success via status code or a specific redirect
+                        // Flask redirect will return 302, which jQuery follows by default.
+                        // If the request ends up here, it likely means the redirect didn't happen (e.g., validation error on server)
+                        // Or if your backend returns JSON on success:
+                        // if (response.success) { window.location.href = response.redirect_url || '/dashboard'; }
+
+                        // Since the backend redirects on success, this success block
+                        // might only be reached if the AJAX call itself works but the
+                        // backend returns an error *page* (like 401/400 with HTML).
+                        // It's safer to rely on the error block for login failures.
+
+                        // Assuming successful login redirects handled by the browser following Flask's redirect
+                         console.log("Login AJAX success - should be redirected by server.");
+                         // Force redirect if needed, though Flask should handle it
+                         window.location.href = "{{ url_for('dashboard') }}";
+
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors (e.g., 401 Unauthorized, 400 Bad Request)
+                        let errorMessage = 'Login failed. Please check your credentials.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message; // Use server message if available
+                        } else if (xhr.status === 401) {
+                             errorMessage = 'Invalid email or password.';
+                        } else if (xhr.status === 400) {
+                             errorMessage = 'Invalid input. Please check the fields.';
+                        } else {
+                             errorMessage = 'An unexpected error occurred. Please try again later.';
+                        }
+                         showGeneralError('login', errorMessage);
+                    },
+                    complete: function() {
+                         // Re-enable button regardless of success/error
+                         submitButton.prop('disabled', false).text('Login');
                     }
                 });
             });
 
+            // Signup Form Submission
             $('#signup-form').on('submit', function(e) {
                 e.preventDefault();
+                clearErrors($(this)); // Clear previous errors
                 let hasErrors = false;
-
-                // Reset error messages
-                $('#signup-name-error').hide();
-                $('#signup-email-error').hide();
-                $('#signup-password-error').hide();
-                $('#signup-role-error').hide();
-                $('#signup-error').hide();
 
                 const name = $('#signup-name').val().trim();
                 const email = $('#signup-email').val().trim();
                 const password = $('#signup-password').val().trim();
                 const role = $('#signup-role').val();
 
-                // Name validation
                 if (!name) {
-                    $('#signup-name-error').text('Name is required').show();
+                    showError('signup-name', 'Full name is required');
                     hasErrors = true;
                 }
 
-                // Email validation (very basic)
                 if (!email) {
-                    $('#signup-email-error').text('Email is required').show();
+                    showError('signup-email', 'Email is required');
                     hasErrors = true;
-                } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-                    $('#signup-email-error').text('Invalid email format').show();
+                } else if (!isValidEmail(email)) {
+                    showError('signup-email', 'Invalid email format');
                     hasErrors = true;
                 }
 
                 if (!password) {
-                    $('#signup-password-error').text('Password is required').show();
+                    showError('signup-password', 'Password is required');
                     hasErrors = true;
+                } else if (password.length < 6) { // Example: Add password length check
+                     showError('signup-password', 'Password must be at least 6 characters');
+                     hasErrors = true;
                 }
 
                 if (!role) {
-                    $('#signup-role-error').text('Role is required').show();
+                    showError('signup-role', 'Please select an account type');
                     hasErrors = true;
                 }
 
                 if (hasErrors) {
-                    return; // Stop submission if there are errors
+                    return; // Stop submission
                 }
 
-                // Simulate a signup request
+                // Disable button
+                 const submitButton = $(this).find('button[type="submit"]');
+                submitButton.prop('disabled', true).text('Joining...');
+
+
+                // AJAX call (sending as form data)
                 $.ajax({
-                    url: '/signup',
+                    url: "{{ url_for('signup_page') }}", // Use url_for
                     method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ name: name, email: email, password: password, role: role }),
-                    success: function(response) {
-                        if (response.success) {
-                            // redirect
-                            window.location.href = '/dashboard';
-                        } else {
-                            $('#signup-error').text(response.message || 'Failed to sign up.').show();
-                        }
+                    data: {
+                        name: name,
+                        email: email,
+                        password: password,
+                        role: role
                     },
-                    error: function() {
-                        $('#signup-error').text('An error occurred. Please try again later.').show();
+                   success: function(response, status, xhr) {
+                       // Similar to login, successful signup should redirect via Flask
+                       console.log("Signup AJAX success - should be redirected by server.");
+                       // Force redirect if needed
+                       window.location.href = "{{ url_for('dashboard') }}";
+                    },
+                    error: function(xhr, status, error) {
+                         let errorMessage = 'Signup failed. Please try again.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            // If backend sends JSON error on failure
+                            errorMessage = xhr.responseJSON.message;
+                        } else if (xhr.status === 400) {
+                             // Check response text for potential HTML error messages if not JSON
+                             // This part is tricky if the server returns HTML on validation failure
+                             // For simplicity, show a generic message or parse the specific text if structure is known
+                             const responseText = xhr.responseText;
+                             if (responseText && responseText.includes("Email already exists")) {
+                                 errorMessage = "Email already exists. Please try logging in.";
+                             } else if (responseText && responseText.includes("Invalid email format")) {
+                                  errorMessage = "Invalid email format.";
+                             } else {
+                                 errorMessage = "Signup failed. Please check your input.";
+                             }
+
+                        } else {
+                            errorMessage = 'An unexpected error occurred during signup.';
+                        }
+                         showGeneralError('signup', errorMessage);
+                    },
+                    complete: function() {
+                        // Re-enable button
+                        submitButton.prop('disabled', false).text('Join Now');
                     }
                 });
             });
