@@ -3,24 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <!-- Use user's name in title if available -->
+    <title>Dashboard - {{ user.name if user else 'User' }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <!-- Using Tailwind Play CDN for simplicity -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for toast messages */
         .toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #4caf50;
+            background-color: #1dbf73; /* Match Fiverr Green */
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px; /* Slightly larger padding */
             border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             font-size: 1rem;
-            z-index: 1000;
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            z-index: 1050; /* Ensure it's above most elements */
+            opacity: 0; /* Start hidden */
+            transform: translateY(20px); /* Start off-screen */
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            max-width: 350px; /* Limit width */
+            word-wrap: break-word; /* Wrap long messages */
+        }
+
+        .toast.show {
+             opacity: 1;
+             transform: translateY(0);
         }
 
         .toast-warning {
@@ -31,154 +41,314 @@
             background-color: #e74c3c;
         }
 
-        .toast.fade-out {
-            opacity: 0;
-            transform: translateY(20px);
+        .toast-info {
+             background-color: #3498db;
+        }
+
+        /* Simple loader */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 5px auto; /* Center it */
+            display: none; /* Hide by default */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Ensure links look like buttons if needed */
+        .button-link {
+             display: inline-block;
+             padding: 0.5rem 1rem;
+             border-radius: 0.25rem;
+             text-align: center;
+             text-decoration: none;
+             transition: background-color 0.2s ease;
         }
     </style>
 </head>
 <body class="bg-gray-100 font-inter">
-    <div class="container mx-auto p-4">
-        <h1 class="text-3xl font-semibold text-gray-800 mb-6">Dashboard</h1>
 
-        <div id="dashboard-content" class="bg-white shadow-md rounded-lg p-6">
-            <p class="text-gray-700 mb-4">Welcome to your dashboard!</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-2">My Purchases</h2>
-                    <ul id="purchase-list" class="text-gray-700">
-                    </ul>
-                    <button id="view-purchases" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">View Purchases</button>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-2">Fund Account</h2>
-                    <p class="text-gray-700 mb-4">Add funds to your account to make purchases.</p>
-                    <div class="flex items-end space-x-2">
-                        <input type="number" id="fund-amount" placeholder="Amount" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-                        <button id="fund-account" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Fund Account</button>
-                    </div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-2">Create Gig</h2>
-                    <p class="text-gray-700 mb-4">Create a new gig to offer your services.</p>
-                    <button id="create-gig" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Create Gig</button>
-                </div>
+    <!-- Optional: Simple Header -->
+    <header class="bg-white shadow-sm mb-6">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-semibold text-gray-800">
+                Dashboard
+            </h1>
+            <div>
+                <span class="text-gray-600 mr-4">Welcome, {{ user.name }}!</span>
+                <a href="{{ url_for('logout') }}" class="text-blue-600 hover:text-blue-800">Logout</a>
             </div>
+        </nav>
+    </header>
+
+    <div class="container mx-auto p-4">
+
+        <!-- Display User Balance -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6 text-center">
+            <h2 class="text-xl font-semibold text-gray-700">Your Balance</h2>
+            <p class="text-3xl font-bold text-green-600 mt-2">
+                ${{ "%.2f".format(user.balance) }}
+            </p>
+             <a href="{{ url_for('fund_account_page') }}" id="fund-account-link" class="mt-4 inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded button-link">
+                Add Funds
+            </a>
         </div>
-    </div>
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- Left Column (Purchases/Sales) -->
+            <div class="bg-white shadow-md rounded-lg p-6">
+                {% if user.role == 'seller' %}
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Sales</h2>
+                    <button id="view-sales" class="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Load My Sales
+                    </button>
+                    <div id="sales-loader" class="loader"></div>
+                    <ul id="sales-list" class="list-disc list-inside text-gray-700 space-y-1">
+                        <!-- Sales will be loaded here by JS -->
+                    </ul>
+                    <p id="no-sales-message" class="text-gray-500" style="display: none;">You haven't made any sales yet.</p>
+
+                {% elif user.role == 'user' %}
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">My Purchases</h2>
+                    <button id="view-purchases" class="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Load My Purchases
+                    </button>
+                    <div id="purchases-loader" class="loader"></div>
+                    <ul id="purchase-list" class="list-disc list-inside text-gray-700 space-y-1">
+                       <!-- Purchases will be loaded here by JS -->
+                    </ul>
+                    <p id="no-purchases-message" class="text-gray-500" style="display: none;">You haven't made any purchases yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Right Column (Gigs/Automations) -->
+            <div class="bg-white shadow-md rounded-lg p-6">
+                 {% if user.role == 'seller' %}
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Gigs</h2>
+                     <a href="{{ url_for('create_gig_page') }}" class="mb-4 inline-block bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded button-link">
+                        Create New Gig
+                    </a>
+                    {% if gigs %}
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            {% for gig in gigs %}
+                                <li class="border-b pb-1">
+                                    <a href="{{ url_for('view_gig', gig_id=gig._id) }}" class="text-blue-600 hover:underline">{{ gig.title }}</a>
+                                    - ${{ "%.2f".format(gig.price) }}
+                                    <span class="text-sm ml-2 p-1 rounded {{ 'bg-green-200 text-green-800' if gig.status == 'active' else 'bg-red-200 text-red-800' if gig.status == 'sold' else 'bg-gray-200 text-gray-800' }}">
+                                        {{ gig.status | capitalize }}
+                                    </span>
+                                    <!-- Add Edit/Delete buttons later if needed -->
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-gray-500">You haven't created any gigs yet.</p>
+                    {% endif %}
+
+                 {% elif user.role == 'user' %}
+                    <!-- Maybe show available automations or something relevant for users -->
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Explore Services</h2>
+                     <p class="text-gray-600 mb-4">Find gigs and automations to help you succeed.</p>
+                     <a href="{{ url_for('index') }}#services" class="mb-2 inline-block bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded button-link">
+                        Browse Gigs
+                    </a>
+                    <br>
+                    <a href="{{ url_for('view_saas_automations') }}" class="inline-block bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded button-link">
+                        Explore Automations
+                    </a>
+                    <!-- We already listed purchased items in the other column -->
+
+                 {% endif %}
+            </div>
+
+        </div> <!-- End Grid -->
+
+    </div> <!-- End Container -->
 
     <script>
-        // Function to display toast messages
-        function showToast(message, type = 'success') {
+        // --- Toast Message Functionality ---
+        function showToast(message, type = 'info', duration = 3000) {
+            // Remove any existing toasts first
+            document.querySelectorAll('.toast').forEach(t => t.remove());
+
             const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
+            toast.className = `toast toast-${type}`; // Base class + type class
             toast.textContent = message;
             document.body.appendChild(toast);
 
+            // Trigger reflow to enable transition
+            void toast.offsetWidth;
+
+            // Add 'show' class to fade in and slide up
+            toast.classList.add('show');
+
+            // Set timeout to fade out and remove
             setTimeout(() => {
-                toast.classList.add('fade-out');
-                setTimeout(() => toast.remove(), 500); // Remove after fade out
-            }, 2000); // Display for 2 seconds
+                toast.classList.remove('show'); // Fade out and slide down
+                // Remove from DOM after transition ends
+                toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+            }, duration);
         }
 
-        // Function to fetch dashboard data
-        function fetchDashboardData() {
-            fetch('/dashboard')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+        // --- AJAX Call Helper ---
+        async function makeApiCall(url, options = {}) {
+            const defaultOptions = {
+                method: 'GET', // Default to GET
+                headers: {
+                    'Accept': 'application/json', // Expect JSON response
+                    // Add other headers like CSRF token if needed
+                },
+                // Add credentials if needed for CORS, but usually not for same-origin
+            };
+            const finalOptions = { ...defaultOptions, ...options };
+
+             // Show loader if specified
+            const loaderId = options.loaderId;
+            const loaderElement = loaderId ? document.getElementById(loaderId) : null;
+            if (loaderElement) loaderElement.style.display = 'block';
+
+
+            try {
+                const response = await fetch(url, finalOptions);
+
+                if (!response.ok) {
+                    let errorMsg = `HTTP error! Status: ${response.status}`;
+                    try {
+                        // Try to parse JSON error message from backend
+                        const errorData = await response.json();
+                        errorMsg = errorData.message || errorMsg;
+                    } catch (e) {
+                        // Could not parse JSON, use status text
+                        errorMsg = response.statusText || errorMsg;
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        const dashboardContent = document.getElementById('dashboard-content');
-                        dashboardContent.innerHTML = `<p class="text-gray-700 mb-4">${data.message}</p>`; // Display welcome message
+                     throw new Error(errorMsg);
+                }
 
-                        // Add buttons for purchases and funding
-                        const purchasesDiv = document.createElement('div');
-                        purchasesDiv.className = "bg-gray-50 rounded-lg p-4 shadow-sm";
-                        purchasesDiv.innerHTML = `
-                            <h2 class="text-lg font-semibold text-gray-800 mb-2">My Purchases</h2>
-                            <ul id="purchase-list" class="text-gray-700">
-                                </ul>
-                            <button id="view-purchases" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">View Purchases</button>
-                        `;
+                // Check content type before parsing JSON
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return await response.json(); // Parse JSON if response is JSON
+                } else {
+                     console.warn("Response was not JSON, returning text.");
+                    return await response.text(); // Return text otherwise
+                }
 
-                        const fundingDiv = document.createElement('div');
-                        fundingDiv.className = "bg-gray-50 rounded-lg p-4 shadow-sm";
-                        fundingDiv.innerHTML = `
-                            <h2 class="text-lg font-semibold text-gray-800 mb-2">Fund Account</h2>
-                            <p class="text-gray-700 mb-4">Add funds to your account to make purchases.</p>
-                            <div class="flex items-end space-x-2">
-                                <input type="number" id="fund-amount" placeholder="Amount" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-                                <button id="fund-account" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Fund Account</button>
-                            </div>
-                        `;
-
-                        const createGigDiv = document.createElement('div');
-                        createGigDiv.className = "bg-gray-50 rounded-lg p-4 shadow-sm";
-                        createGigDiv.innerHTML = `
-                            <h2 class="text-lg font-semibold text-gray-800 mb-2">Create Gig</h2>
-                            <p class="text-gray-700 mb-4">Create a new gig to offer your services.</p>
-                            <button id="create-gig" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Create Gig</button>
-                        `;
-
-                        dashboardContent.appendChild(purchasesDiv);
-                        dashboardContent.appendChild(fundingDiv);
-                        dashboardContent.appendChild(createGigDiv);
-
-                        showToast(data.message); // Show success message as toast
-
-                        // Event listener for view purchases button
-                        const viewPurchasesButton = document.getElementById('view-purchases');
-                        viewPurchasesButton.addEventListener('click', () => {
-                            // Replace this with your actual logic to fetch and display purchases
-                            const purchaseList = document.getElementById('purchase-list');
-                            purchaseList.innerHTML = '<li>Purchase 1 - $10</li><li>Purchase 2 - $20</li>'; // Mock data
-                            showToast('Fetching your purchases...', 'success');
-                        });
-
-                        // Event listener for fund account button
-                        const fundAccountButton = document.getElementById('fund-account');
-                        fundAccountButton.addEventListener('click', () => {
-                            const amountInput = document.getElementById('fund-amount');
-                            const amount = parseFloat(amountInput.value);
-                            if (isNaN(amount) || amount <= 0) {
-                                showToast('Please enter a valid amount to fund your account.', 'error');
-                                return;
-                            }
-                            // Replace this with your actual logic to fund the account
-                            showToast(`Successfully funded account with $${amount}`, 'success');
-                            amountInput.value = ''; // Clear the input
-                        });
-
-                        // Event listener for create gig button
-                        const createGigButton = document.getElementById('create-gig');
-                        createGigButton.addEventListener('click', () => {
-                            // Replace this with your actual logic to navigate to the gig creation page
-                            showToast('Navigating to gig creation page...', 'success');
-                            // For demonstration purposes, you might use window.location.href to redirect
-                            // window.location.href = '/create-gig'; //  Replace '/create-gig' with your actual URL
-                        });
+            } finally {
+                 // Hide loader regardless of success/failure
+                 if (loaderElement) loaderElement.style.display = 'none';
+            }
+        }
 
 
-                    } else {
-                        showToast(data.message, 'error'); // Show error message as toast
-                        // Redirect to login if not logged in
-                        window.location.href = '/'; // Redirect to the index page
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Load Purchases (for User) ---
+            const viewPurchasesButton = document.getElementById('view-purchases');
+            const purchaseList = document.getElementById('purchase-list');
+            const noPurchasesMsg = document.getElementById('no-purchases-message');
+
+            if (viewPurchasesButton && purchaseList && noPurchasesMsg) {
+                viewPurchasesButton.addEventListener('click', async () => {
+                    viewPurchasesButton.disabled = true; // Prevent double clicks
+                    purchaseList.innerHTML = ''; // Clear previous list
+                    noPurchasesMsg.style.display = 'none';
+
+                    try {
+                        const data = await makeApiCall("{{ url_for('view_purchases') }}", { loaderId: 'purchases-loader' });
+                        console.log("Purchases data:", data); // Debugging
+
+                        if (data.success && data.purchases && data.purchases.length > 0) {
+                            data.purchases.forEach(item => {
+                                const li = document.createElement('li');
+                                const purchaseDate = new Date(item.purchase_date).toLocaleDateString();
+                                // Simple display, link to gig/automation later if needed
+                                li.textContent = `${item.item_title} - $${item.price.toFixed(2)} on ${purchaseDate} (Status: ${item.status})`;
+                                purchaseList.appendChild(li);
+                            });
+                        } else if (data.success) {
+                            noPurchasesMsg.style.display = 'block';
+                        } else {
+                            throw new Error(data.message || 'Failed to load purchases.');
+                        }
+                        // Optionally hide the button after loading?
+                        // viewPurchasesButton.style.display = 'none';
+
+                    } catch (error) {
+                        console.error('Error fetching purchases:', error);
+                        showToast(`Error loading purchases: ${error.message}`, 'error');
+                        noPurchasesMsg.style.display = 'block'; // Show message on error too
+                    } finally {
+                        viewPurchasesButton.disabled = false; // Re-enable button
                     }
-                })
-                .catch(error => {
-                    console.error('Error fetching dashboard data:', error);
-                    showToast('Failed to fetch dashboard data. Please check your network connection.', 'error');
-                    // Optionally, redirect to login or show a message
-                    window.location.href = '/';
                 });
-        }
+            }
 
-        // Call fetchDashboardData when the page loads
-        window.onload = fetchDashboardData;
+             // --- Load Sales (for Seller) ---
+            const viewSalesButton = document.getElementById('view-sales');
+            const salesList = document.getElementById('sales-list');
+            const noSalesMsg = document.getElementById('no-sales-message');
+
+            if (viewSalesButton && salesList && noSalesMsg) {
+                 viewSalesButton.addEventListener('click', async () => {
+                    viewSalesButton.disabled = true;
+                    salesList.innerHTML = '';
+                    noSalesMsg.style.display = 'none';
+
+                    try {
+                        // NOTE: You need to CREATE a Flask endpoint like '/api/sales'
+                        // that returns JSON data for sales, similar to '/purchases'.
+                        // The current '/dashboard' fetches sales data in Python but doesn't
+                        // expose it via a dedicated JSON API endpoint.
+                        // Let's assume you create `@app.route('/api/sales')` later.
+
+                        // *** TEMPORARY: Using purchases endpoint for demo structure ***
+                        // *** REPLACE '/purchases' with your actual '/api/sales' endpoint URL ***
+                        showToast("Fetching sales data (using placeholder)...", "info");
+                        const data = await makeApiCall("{{ url_for('view_purchases') }}", { loaderId: 'sales-loader' }); // <-- REPLACE THIS URL
+                        console.log("Sales data (placeholder):", data);
+
+                        // Adapt this logic once you have the real sales endpoint
+                        if (data.success && data.purchases && data.purchases.length > 0) {
+                             data.purchases.forEach(item => { // Replace .purchases with .sales
+                                const li = document.createElement('li');
+                                const saleDate = new Date(item.purchase_date).toLocaleDateString(); // Use correct date field
+                                // Adjust text based on actual sales data fields
+                                li.textContent = `Sold: ${item.item_title} for $${item.price.toFixed(2)} on ${saleDate} (Buyer: ${item.buyer_id || 'N/A'})`; // Example
+                                salesList.appendChild(li);
+                            });
+                        } else if (data.success) {
+                            noSalesMsg.style.display = 'block';
+                        } else {
+                            throw new Error(data.message || 'Failed to load sales.');
+                        }
+                         // viewSalesButton.style.display = 'none'; // Optionally hide button
+
+                    } catch (error) {
+                        console.error('Error fetching sales:', error);
+                        showToast(`Error loading sales: ${error.message}`, 'error');
+                        noSalesMsg.style.display = 'block';
+                    } finally {
+                         viewSalesButton.disabled = false;
+                    }
+                });
+            }
+
+            // Note: Fund Account button is now a link handled by Flask routing.
+            // Note: Create Gig button is now a link handled by Flask routing.
+
+        }); // End DOMContentLoaded
+
     </script>
+
 </body>
 </html>
