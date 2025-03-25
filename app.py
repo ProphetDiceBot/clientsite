@@ -5,13 +5,12 @@ from bson import ObjectId
 from functools import wraps
 import re  # Import the regular expression module
 
-
 app = Flask(__name__)
-app.config['MONGO_URI'] = 'mongodb+srv://0p3nbullet:aiJ7QYL75t5pu0mo@prophetdice.8605b.mongodb.net/'
-app.secret_key = 'your_secret_key'  #  Set a secret key for sessions
+app.config['MONGO_URI'] = 'mongodb+srv://0p3nbullet:aiJ7QYL75t5pu0mo@prophetdice.8605b.mongodb.net/fiverr_clone_db'
+app.secret_key = 'your_secret_key'  # Set a secret key for sessions
 mongo = PyMongo(app)
 
-#  Decorator for routes that require login
+# Decorator for routes that require login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -26,14 +25,12 @@ def is_valid_email(email):
     """
     return re.match(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", email) is not None
 
-
 @app.route('/')
 def index():
     """
     This route renders the main HTML page.
     """
-    return render_template('index.html')  #  'index.html'
-
+    return render_template('index.html')
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -45,7 +42,7 @@ def signup():
     email = data.get('email')
     password = data.get('password')
 
-    #  validation
+    # Validation
     if not name or not email or not password:
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
     if not is_valid_email(email):
@@ -64,13 +61,11 @@ def signup():
 
     try:
         user_id = mongo.db.users.insert_one(user_data).inserted_id
-        session['user_id'] = str(user_id)  #  set the user_id in the session
+        session['user_id'] = str(user_id)  # Set the user_id in the session
         return jsonify({'success': True, 'message': 'User created successfully'}), 201
     except Exception as e:
         print(f"Error creating user: {e}")
         return jsonify({'success': False, 'message': 'Failed to create user'}), 500
-
-
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -87,7 +82,7 @@ def login():
     user = mongo.db.users.find_one({'email': email})
 
     if user and check_password_hash(user['password'], password):
-        session['user_id'] = str(user['_id']) #  set the user_id in the session
+        session['user_id'] = str(user['_id'])  # Set the user_id in the session
         return jsonify({'success': True, 'message': 'Logged in successfully'}), 200
     else:
         return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
@@ -97,21 +92,21 @@ def logout():
     """
     Handles user logout.
     """
-    session.pop('user_id', None)  #  Clear the user session
+    session.pop('user_id', None)  # Clear the user session
     return jsonify({'success': True, 'message': 'Logged out successfully'}), 200
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
     """
-    Placeholder route for the dashboard.  Now requires login.
+    Placeholder route for the dashboard. Now requires login.
     """
     user_id = session.get('user_id')
     user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
     if user:
-        return jsonify({'success':True, 'message': f"Welcome to the Dashboard, {user['name']}!"}), 200
+        return jsonify({'success': True, 'message': f"Welcome to the Dashboard, {user['name']}!"}), 200
     else:
-        return jsonify({'success':False, 'message': "User not found"}), 404
+        return jsonify({'success': False, 'message': "User not found"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
