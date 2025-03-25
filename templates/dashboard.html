@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        /* Custom styles for toast messages */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0.2);
+            font-size: 1rem;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .toast-warning {
+            background-color: #f39c12;
+        }
+
+        .toast-error {
+            background-color: #e74c3c;
+        }
+
+        .toast.fade-out {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-inter">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-semibold text-gray-800 mb-6">Dashboard</h1>
+
+        <div id="dashboard-content" class="bg-white shadow-md rounded-lg p-6">
+            <p class="text-gray-700 mb-4">Welcome to your dashboard!</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-2">My Purchases</h2>
+                    <ul id="purchase-list" class="text-gray-700">
+                    </ul>
+                    <button id="view-purchases" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">View Purchases</button>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-2">Fund Account</h2>
+                    <p class="text-gray-700 mb-4">Add funds to your account to make purchases.</p>
+                    <div class="flex items-end space-x-2">
+                        <input type="number" id="fund-amount" placeholder="Amount" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                        <button id="fund-account" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Fund Account</button>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-2">Create Gig</h2>
+                    <p class="text-gray-700 mb-4">Create a new gig to offer your services.</p>
+                    <button id="create-gig" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Create Gig</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to display toast messages
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 500); // Remove after fade out
+            }, 2000); // Display for 2 seconds
+        }
+
+        // Function to fetch dashboard data
+        function fetchDashboardData() {
+            fetch('/dashboard')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const dashboardContent = document.getElementById('dashboard-content');
+                        dashboardContent.innerHTML = `<p class="text-gray-700 mb-4">${data.message}</p>`; // Display welcome message
+
+                        // Add buttons for purchases and funding
+                        const purchasesDiv = document.createElement('div');
+                        purchasesDiv.className = "bg-gray-50 rounded-lg p-4 shadow-sm";
+                        purchasesDiv.innerHTML = `
+                            <h2 class="text-lg font-semibold text-gray-800 mb-2">My Purchases</h2>
+                            <ul id="purchase-list" class="text-gray-700">
+                                </ul>
+                            <button id="view-purchases" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">View Purchases</button>
+                        `;
+
+                        const fundingDiv = document.createElement('div');
+                        fundingDiv.className = "bg-gray-50 rounded-lg p-4 shadow-sm";
+                        fundingDiv.innerHTML = `
+                            <h2 class="text-lg font-semibold text-gray-800 mb-2">Fund Account</h2>
+                            <p class="text-gray-700 mb-4">Add funds to your account to make purchases.</p>
+                            <div class="flex items-end space-x-2">
+                                <input type="number" id="fund-amount" placeholder="Amount" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                                <button id="fund-account" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Fund Account</button>
+                            </div>
+                        `;
+
+                        const createGigDiv = document.createElement('div');
+                        createGigDiv.className = "bg-gray-50 rounded-lg p-4 shadow-sm";
+                        createGigDiv.innerHTML = `
+                            <h2 class="text-lg font-semibold text-gray-800 mb-2">Create Gig</h2>
+                            <p class="text-gray-700 mb-4">Create a new gig to offer your services.</p>
+                            <button id="create-gig" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Create Gig</button>
+                        `;
+
+                        dashboardContent.appendChild(purchasesDiv);
+                        dashboardContent.appendChild(fundingDiv);
+                        dashboardContent.appendChild(createGigDiv);
+
+                        showToast(data.message); // Show success message as toast
+
+                        // Event listener for view purchases button
+                        const viewPurchasesButton = document.getElementById('view-purchases');
+                        viewPurchasesButton.addEventListener('click', () => {
+                            // Replace this with your actual logic to fetch and display purchases
+                            const purchaseList = document.getElementById('purchase-list');
+                            purchaseList.innerHTML = '<li>Purchase 1 - $10</li><li>Purchase 2 - $20</li>'; // Mock data
+                            showToast('Fetching your purchases...', 'success');
+                        });
+
+                        // Event listener for fund account button
+                        const fundAccountButton = document.getElementById('fund-account');
+                        fundAccountButton.addEventListener('click', () => {
+                            const amountInput = document.getElementById('fund-amount');
+                            const amount = parseFloat(amountInput.value);
+                            if (isNaN(amount) || amount <= 0) {
+                                showToast('Please enter a valid amount to fund your account.', 'error');
+                                return;
+                            }
+                            // Replace this with your actual logic to fund the account
+                            showToast(`Successfully funded account with $${amount}`, 'success');
+                            amountInput.value = ''; // Clear the input
+                        });
+
+                        // Event listener for create gig button
+                        const createGigButton = document.getElementById('create-gig');
+                        createGigButton.addEventListener('click', () => {
+                            // Replace this with your actual logic to navigate to the gig creation page
+                            showToast('Navigating to gig creation page...', 'success');
+                            // For demonstration purposes, you might use window.location.href to redirect
+                            // window.location.href = '/create-gig'; //  Replace '/create-gig' with your actual URL
+                        });
+
+
+                    } else {
+                        showToast(data.message, 'error'); // Show error message as toast
+                        // Redirect to login if not logged in
+                        window.location.href = '/'; // Redirect to the index page
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching dashboard data:', error);
+                    showToast('Failed to fetch dashboard data. Please check your network connection.', 'error');
+                    // Optionally, redirect to login or show a message
+                    window.location.href = '/';
+                });
+        }
+
+        // Call fetchDashboardData when the page loads
+        window.onload = fetchDashboardData;
+    </script>
+</body>
+</html>
