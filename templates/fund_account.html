@@ -1,1 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fund Your Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Using Tailwind Play CDN for simplicity -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        /* Custom styles for Stripe Element */
+        .StripeElement {
+            box-sizing: border-box;
+            height: 40px;
+            padding: 10px 12px;
+            border: 1px solid #ccd0d5;
+            border-radius: 4px;
+            background-color: white;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+            transition: box-shadow 150ms ease;
+        }
 
+        .StripeElement--focus {
+            box-shadow: 0 1px 3px 0 #cfd7df;
+            border-color: #80bdff; /* Example focus color */
+        }
+
+        .StripeElement--invalid {
+            border-color: #fa755a;
+        }
+
+        .StripeElement--webkit-autofill {
+            background-color: #fefde5 !important;
+        }
+
+         /* Toast Message Styles (Copied from dashboard for consistency) */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background-color: #1dbf73; color: white;
+            padding: 12px 24px; border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 1rem; z-index: 1050;
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            max-width: 350px; word-wrap: break-word;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast-warning { background-color: #f39c12; }
+        .toast-error { background-color: #e74c3c; }
+        .toast-info { background-color: #3498db; }
+
+        /* Simple loader */
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid #3498db;
+            border-radius: 50%; width: 24px; height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto; display: none; /* Hide by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-inter">
+
+    <!-- Optional: Simple Header -->
+    <header class="bg-white shadow-sm mb-6">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-semibold text-gray-800">
+                Fund Account
+            </h1>
+            <div>
+                 <a href="{{ url_for('dashboard') }}" class="text-blue-600 hover:text-blue-800 mr-4">Back to Dashboard</a>
+                <span class="text-gray-600 mr-4">Balance: ${{ "%.2f".format(user.balance) }}</span>
+                <a href="{{ url_for('logout') }}" class="text-blue-600 hover:text-blue-800">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container mx-auto p-4 max-w-lg">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Add Funds to Your Account</h2>
+
+            {% if error %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                  <strong class="font-bold">Error:</strong>
+                  <span class="block sm:inline">{{ error }}</span>
+                </div>
+            {% endif %}
+
+            {% if not stripe_key %}
+                 <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
+                  <strong class="font-bold">Configuration Issue:</strong>
+                  <span class="block sm:inline">Payment processing is currently unavailable. Please contact support.</span>
+                </div>
+            {% else %}
+                <!-- Payment Form -->
+                <form id="payment-form" class="space-y-4">
+                    <div>
+                        <label for="amount" class="block text-sm font-medium text-gray-700">Amount (USD)</label>
+                        <input type="number" id="amount" name="amount" placeholder="e.g., 10.00" min="0.50" step="0.01" required
+                               class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <p class="mt-1 text-xs text-gray-500">Minimum amount is $0.50 USD.</p>
+                    </div>
+
+                    <div>
+                        <label for="card-element" class="block text-sm font-medium text-gray-700">
+                            Credit or debit card
+                        </label>
+                        <!-- A Stripe Element will be inserted here. -->
+                        <div id="card-element" class="mt-1"></div>
+                        <!-- Used to display form errors. -->
+                        <div id="card-errors" role="alert" class="text-red-600 text-sm mt-2"></div>
+                    </div>
+
+                    <!-- Loader -->
+                    <div id="payment-loader" class="loader"></div>
+
+                    <!-- General Error Message -->
+                     <div id="payment-message" class="text-red-600 text-sm mt-2" style="display: none;"></div>
+
+
+                    <button id="submit-button" type="submit"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
+                        Add Funds
+                    </button>
+                </form>
+            {% endif %} <!-- End check for stripe_key -->
+
+        </div>
+    </div>
+
+    <script>
+        // --- Toast Message Functionality (Copied) ---
+        function showToast(message, type = 'info', duration = 3000) {
+            document.querySelectorAll('.toast').forEach(t => t.remove());
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            void toast.offsetWidth; // Trigger reflow
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+            }, duration);
+        }
+
+        // --- Stripe Integration ---
+        const stripeKey = "{{ stripe_key }}"; // Get key from Flask template
+        const paymentForm = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const amountInput = document.getElementById('amount');
+        const cardErrors = document.getElementById('card-errors');
+        const paymentMessage = document.getElementById('payment-message');
+        const loader = document.getElementById('payment-loader');
+
+        let stripe = null;
+        let cardElement = null;
+
+        // Only initialize Stripe if the key is present
+        if (stripeKey && stripeKey !== 'None' && paymentForm) {
+            stripe = Stripe(stripeKey);
+
+            const elements = stripe.elements();
+            const style = {
+                base: {
+                    color: "#32325d",
+                    fontFamily: '"Inter", sans-serif',
+                    fontSmoothing: "antialiased",
+                    fontSize: "16px",
+                    "::placeholder": {
+                        color: "#aab7c4"
+                    }
+                },
+                invalid: {
+                    color: "#fa755a",
+                    iconColor: "#fa755a"
+                }
+            };
+
+            // Create an instance of the card Element.
+            cardElement = elements.create('card', { style: style });
+
+            // Add an instance of the card Element into the `card-element` <div>.
+            cardElement.mount('#card-element');
+
+            // Handle real-time validation errors from the card Element.
+            cardElement.on('change', function(event) {
+                if (event.error) {
+                    cardErrors.textContent = event.error.message;
+                } else {
+                    cardErrors.textContent = '';
+                }
+                // Enable/disable submit button based on card completeness (optional but good UX)
+                 submitButton.disabled = !event.complete;
+            });
+
+
+            // Handle form submission.
+            paymentForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                setLoading(true); // Show loader, disable button
+
+                const amount = parseFloat(amountInput.value);
+                if (isNaN(amount) || amount < 0.50) {
+                     showToast('Please enter a valid amount (at least $0.50).', 'error');
+                     setMessage('Invalid amount.');
+                     setLoading(false);
+                    return;
+                }
+
+                // 1. Create Payment Intent on the server
+                let clientSecret;
+                try {
+                    const response = await fetch("{{ url_for('create_payment_intent') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ amount: amount }),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || `Server error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    clientSecret = data.clientSecret;
+
+                } catch (error) {
+                    console.error("Error creating PaymentIntent:", error);
+                    setMessage(`Failed to initialize payment: ${error.message}`);
+                    showToast(`Error: ${error.message}`, 'error');
+                    setLoading(false);
+                    return;
+                }
+
+                 if (!clientSecret) {
+                     setMessage('Failed to get payment session. Please try again.');
+                     setLoading(false);
+                     return;
+                 }
+
+                // 2. Confirm the card payment with Stripe
+                const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
+                    clientSecret, {
+                        payment_method: {
+                            card: cardElement,
+                            // billing_details: { name: 'Jenny Rosen' }, // Optional: Add billing details if needed
+                        }
+                    }
+                );
+
+                if (stripeError) {
+                    // Show error to your customer (e.g., insufficient funds, card declined)
+                    console.error("Stripe confirmation error:", stripeError);
+                    setMessage(stripeError.message);
+                    showToast(`Payment failed: ${stripeError.message}`, 'error');
+                    setLoading(false);
+                    return;
+                }
+
+                // 3. Payment succeeded - Inform the backend to confirm and update balance
+                if (paymentIntent.status === 'succeeded') {
+                    setMessage('Payment successful! Confirming...');
+                    showToast('Payment successful! Confirming funding...', 'info');
+
+                    try {
+                        const confirmResponse = await fetch("{{ url_for('confirm_funding') }}", {
+                           method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ payment_intent_id: paymentIntent.id }),
+                        });
+
+                        const confirmData = await confirmResponse.json();
+
+                        if (confirmResponse.ok && confirmData.success) {
+                             setMessage(confirmData.message); // Show success message from backend
+                             showToast(confirmData.message, 'success', 5000); // Longer duration for success
+                             // Optionally redirect or update balance display on page
+                             setTimeout(() => {
+                                 window.location.href = "{{ url_for('dashboard') }}"; // Redirect to dashboard after success
+                             }, 1500); // Short delay before redirect
+                        } else {
+                            // Backend confirmation failed even though Stripe succeeded
+                             throw new Error(confirmData.message || 'Backend confirmation failed.');
+                        }
+
+                    } catch (error) {
+                         console.error("Error confirming funding on backend:", error);
+                         // Critical: Payment made but backend failed. Needs investigation.
+                         setMessage(`Payment processed, but confirmation failed: ${error.message}. Please contact support.`);
+                         showToast(`Confirmation Error: ${error.message}. Please contact support.`, 'error', 10000);
+                         setLoading(false); // Keep button enabled for potential retry or user action
+                    }
+
+                } else {
+                     // Handle other statuses if needed (e.g., requires_action)
+                     console.warn("PaymentIntent status:", paymentIntent.status);
+                     setMessage(`Payment status: ${paymentIntent.status}. Please try again or contact support.`);
+                     showToast(`Payment status: ${paymentIntent.status}`, 'warning');
+                     setLoading(false);
+                }
+            });
+
+        } else if (!stripeKey || stripeKey === 'None') {
+            console.error("Stripe Publishable Key is missing or invalid.");
+            // The user sees the config issue message rendered by Flask
+        }
+
+        // --- UI Helper Functions ---
+        function setLoading(isLoading) {
+             if (isLoading) {
+                 submitButton.disabled = true;
+                 loader.style.display = 'block';
+                 paymentMessage.style.display = 'none'; // Hide message when loading
+             } else {
+                 submitButton.disabled = false;
+                 loader.style.display = 'none';
+             }
+         }
+
+         function setMessage(message) {
+             paymentMessage.textContent = message;
+             paymentMessage.style.display = message ? 'block' : 'none'; // Show if message exists
+         }
+
+    </script>
+
+</body>
+</html>
