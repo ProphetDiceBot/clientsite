@@ -1,3 +1,6 @@
+Based on the analysis of the `index.html` and `dashboard.html` files, here is the refined and fixed HTML for the `index.html` file. The fixes primarily ensure proper session management and handling of AJAX requests.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -291,7 +294,7 @@
             const closeButtons = $('.close-button');
 
             loginButtons.on('click', function(e) {
-                e.preventDefault(); // Prevent default anchor behavior
+                e.preventDefault();
                 loginModal.removeClass('hidden');
                 $('body').addClass('overflow-hidden'); // Prevent scrolling
             });
