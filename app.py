@@ -104,9 +104,8 @@ def dashboard():
     user_id = session.get('user_id')
     user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
     if user:
-        return jsonify({'success': True, 'message': f"Welcome to the Dashboard, {user['name']}!"}), 200
+        return render_template('dashboard.html', user=user)
     else:
-        return jsonify({'success': False, 'message': "User not found"}), 404
-
+        return redirect(url_for('login'))
 if __name__ == '__main__':
     app.run(debug=True)
