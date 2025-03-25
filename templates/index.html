@@ -6,7 +6,7 @@
     <title>ByeByeIssue</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
-    <style>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script> <style>
         /* Custom CSS for header to ensure it stands out */
         .header {
             background: linear-gradient(to right, #1dbf73, #08a462); /* Gradient background */
@@ -197,7 +197,7 @@
                                     <input type="password" id="login-password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                     <div id="login-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
                                 </div>
-                                 <div class="flex items-center">
+                                <div class="flex items-center">
                                     <input type="checkbox" id="login-remember" class="mr-2">
                                     <label for="login-remember" class="text-gray-700 text-sm">Remember me</label>
                                 </div>
@@ -245,7 +245,7 @@
                                     <input type="password" id="signup-password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                     <div id="signup-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
                                 </div>
-                                 <div>
+                                <div>
                                     <label for="signup-role" class="block text-gray-700 text-sm font-bold mb-2">Role</label>
                                     <select id="signup-role" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         <option value="">Select Role</option>
@@ -280,7 +280,6 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
     <script>
         $(document).ready(function() {
             // --- Modal functionality ---
@@ -394,7 +393,7 @@
                     $('#signup-password-error').text('Password is required').show();
                     hasErrors = true;
                 }
-                
+
                 if (!role) {
                     $('#signup-role-error').text('Role is required').show();
                     hasErrors = true;
