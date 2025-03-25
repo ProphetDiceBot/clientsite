@@ -49,7 +49,7 @@
             transform: translateY(-5px); /* Move card up slightly on hover */
         }
 
-        .gig-image {
+       .gig-image {
             width: 100%;
             height: 200px; /* Fixed height for consistency */
             object-fit: cover; /* Ensure image covers the entire container */
@@ -69,7 +69,7 @@
     <header class="header header-shadow sticky top-0 z-10">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <a href="#" class="text-white text-2xl font-bold font-serif">
-                <span class="text-yellow-400">B</span>yeByeIssue
+                <span class="text-yellow-400">F</span>iverr
             </a>
             <nav class="hidden md:block">
                 <ul class="flex space-x-6">
@@ -88,14 +88,50 @@
         <div class="container mx-auto px-4">
             <h1 class="text-4xl md:text-6xl font-bold mb-4">Find the perfect freelance services for your business</h1>
             <p class="text-lg mb-8">Connect with top freelancers and get your projects done.</p>
-            <input type="text" id="search-input" placeholder="Search for services..." class="w-full md:w-1/2 px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" placeholder="Search for services..." class="w-full md:w-1/2 px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
     </section>
 
     <section id="services" class="container mx-auto px-4 py-16">
         <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">Popular Services</h2>
-        <div id="services-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="gig-card">
+                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 1" class="gig-image">
+                <div class="gig-details">
+                    <h3 class="text-xl font-semibold mb-2">I will design a professional logo</h3>
+                    <p class="text-gray-600 mb-2">by Jane Smith</p>
+                    <div class="flex items-center mb-2">
+                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                        <span class="ml-1 text-gray-500">(120)</span>
+                    </div>
+                    <p class="text-gray-700 font-bold">Starting at $50</p>
+                </div>
             </div>
+            <div class="gig-card">
+                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 2" class="gig-image">
+                <div class="gig-details">
+                    <h3 class="text-xl font-semibold mb-2">I will develop a responsive website</h3>
+                    <p class="text-gray-600 mb-2">by John Doe</p>
+                    <div class="flex items-center mb-2">
+                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        <span class="ml-1 text-gray-500">(235)</span>
+                    </div>
+                    <p class="text-gray-700 font-bold">Starting at $100</p>
+                </div>
+            </div>
+            <div class="gig-card">
+                <img src="https://placehold.co/400x200/EEE/31343C" alt="Gig 3" class="gig-image">
+                <div class="gig-details">
+                    <h3 class="text-xl font-semibold mb-2">I will write engaging articles</h3>
+                    <p class="text-gray-600 mb-2">by Sarah Williams</p>
+                    <div class="flex items-center mb-2">
+                        <span class="star-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        <span class="ml-1 text-gray-500">(95)</span>
+                    </div>
+                    <p class="text-gray-700 font-bold">Starting at $30</p>
+                </div>
+            </div>
+        </div>
     </section>
 
     <section id="how-it-works" class="bg-gray-50 py-16">
@@ -124,8 +160,16 @@
     <section id="testimonials" class="bg-purple-100 py-16">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-semibold text-gray-800 text-center mb-12">Testimonials</h2>
-            <div id="testimonials-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card">
+                    <p class="text-gray-700 italic mb-4">"I found the perfect freelancer for my logo design. The process was smooth and the quality of work was outstanding!"</p>
+                    <p class="font-semibold text-gray-800">- Michael B.</p>
                 </div>
+                <div class="card">
+                    <p class="text-gray-700 italic mb-4">"Using Fiverr made it easy to find a skilled web developer. I'm very happy with the final result."</p>
+                    <p class="font-semibold text-gray-800">- Jessica L.</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -140,17 +184,17 @@
                     <div class="sm:flex sm:items-start">
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h2 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Login to Your ByeByeIssue Account
+                                Login to Your Fiverr Account
                             </h2>
                             <form id="login-form" class="mt-4 space-y-4">
                                 <div>
                                     <label for="login-email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                                    <input type="email" id="login-email" name="email" placeholder="Enter your email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <input type="email" id="login-email" placeholder="Enter your email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                     <div id="login-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
                                 </div>
                                 <div>
                                     <label for="login-password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                                    <input type="password" id="login-password" name="password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <input type="password" id="login-password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                     <div id="login-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
                                 </div>
                                 <button type="submit" class="fiverr-button w-full">Login</button>
@@ -160,7 +204,7 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button close-login-modal">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button">
                         Cancel
                     </button>
                 </div>
@@ -179,22 +223,22 @@
                     <div class="sm:flex sm:items-start">
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h2 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Create a ByeByeIssue Account
+                                Create a Fiverr Account
                             </h2>
                             <form id="signup-form" class="mt-4 space-y-4">
                                 <div>
                                     <label for="signup-name" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
-                                    <input type="text" id="signup-name" name="name" placeholder="Enter your full name" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <input type="text" id="signup-name" placeholder="Enter your full name" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                     <div id="signup-name-error" class="text-red-500 text-xs italic" style="display: none;"></div>
                                 </div>
                                 <div>
                                     <label for="signup-email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                                                                         <div id="signup-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
+                                    <input type="email" id="signup-email" placeholder="Enter your email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                                                        <div id="signup-email-error" class="text-red-500 text-xs italic" style="display: none;"></div>
                                 </div>
                                 <div>
                                     <label for="signup-password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                                    <input type="password" id="signup-password" name="password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                    <input type="password" id="signup-password" placeholder="Enter your password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                     <div id="signup-password-error" class="text-red-500 text-xs italic" style="display: none;"></div>
                                 </div>
                                 <button type="submit" class="fiverr-button w-full">Signup</button>
@@ -204,7 +248,7 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button close-signup-modal">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm close-button">
                         Cancel
                     </button>
                 </div>
@@ -223,19 +267,14 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
-    <script>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script> <script>
         $(document).ready(function() {
             // --- Modal functionality ---
             const loginModal = $('#login-modal');
             const signupModal = $('#signup-modal');
             const loginButtons = $('a[href="#login"]'); // Select the anchor tag
             const signupButtons = $('a[href="#signup"], #signup-btn'); // Select both anchor and button
-            const closeLoginButtons = $('.close-login-modal');
-            const closeSignupButtons = $('.close-signup-modal');
-            const closeButtons = $('.close-button'); // Select all close buttons
-
-
+            const closeButtons = $('.close-button');
 
             loginButtons.on('click', function(e) {
                 e.preventDefault(); // Prevent default anchor behavior
@@ -249,23 +288,13 @@
                 $('body').addClass('overflow-hidden');
             });
 
-            closeLoginButtons.on('click', function() {
-                loginModal.addClass('hidden');
-                $('body').removeClass('overflow-hidden');
-            });
-
-            closeSignupButtons.on('click', function() {
-                signupModal.addClass('hidden');
-                $('body').removeClass('overflow-hidden');
-            });
-
             closeButtons.on('click', function() {
                 loginModal.addClass('hidden');
                 signupModal.addClass('hidden');
                 $('body').removeClass('overflow-hidden');
             });
 
-            // --- Form Validation and Submission ---
+            // --- Form Validation and Submission (Simplified) ---
             $('#login-form').on('submit', function(e) {
                 e.preventDefault();
                 let hasErrors = false;
@@ -296,22 +325,21 @@
                     return; // Stop submission if there are errors
                 }
 
-                //  AJAX call to your Flask backend
+                // Simulate a login request (replace with actual AJAX call to your server)
                 $.ajax({
-                    url: '/login',
+                    url: '/login', //  Endpoint
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({ email: email, password: password }),
                     success: function(response) {
                         if (response.success) {
                             //  redirect
-                            window.location.href = '/dashboard.html'; //changed
+                            window.location.href = '/dashboard'; //  dashboard
                         } else {
                             $('#login-error').text(response.message || 'Invalid credentials').show();
                         }
                     },
-                    error: function(xhr, status, error) {
-                        console.error("Login error:", xhr, status, error);
+                    error: function() {
                         $('#login-error').text('An error occurred. Please try again later.').show();
                     }
                 });
@@ -355,7 +383,7 @@
                     return; // Stop submission if there are errors
                 }
 
-                //  AJAX call to your Flask backend
+                // Simulate a signup request
                 $.ajax({
                     url: '/signup',
                     method: 'POST',
@@ -363,164 +391,17 @@
                     data: JSON.stringify({ name: name, email: email, password: password }),
                     success: function(response) {
                         if (response.success) {
-                            //  redirect
-                            window.location.href = '/dashboard.html'; //changed
+                            // redirect
+                            window.location.href = '/dashboard';
                         } else {
                             $('#signup-error').text(response.message || 'Failed to sign up.').show();
                         }
                     },
-                    error: function(xhr, status, error) {
-                        console.error("Signup error:", xhr, status, error);
+                    error: function() {
                         $('#signup-error').text('An error occurred. Please try again later.').show();
                     }
                 });
             });
-
-            // --- Dynamic Content Loading (Simulated) ---
-            const servicesGrid = $('#services-grid');
-            const testimonialsGrid = $('#testimonials-grid');
-            const searchInput = $('#search-input');
-
-            // Simulate fetching gigs data
-            function fetchGigs() {
-                const gigs = [
-                    {
-                        title: 'I will design a professional logo',
-                        seller: 'Jane Smith',
-                        rating: 4.5,
-                        reviews: 120,
-                        price: 50,
-                        imageUrl: 'https://placehold.co/400x200/EEE/31343C'
-                    },
-                    {
-                        title: 'I will develop a responsive website',
-                        seller: 'John Doe',
-                        rating: 5,
-                        reviews: 235,
-                        price: 100,
-                        imageUrl: 'https://placehold.co/400x200/EEE/31343C'
-                    },
-                    {
-                        title: 'I will write engaging articles',
-                        seller: 'Sarah Williams',
-                        rating: 4.8,
-                        reviews: 95,
-                        price: 30,
-                        imageUrl: 'https://placehold.co/400x200/EEE/31343C'
-                    },
-                      {
-                        title: 'I will create stunning social media graphics',
-                        seller: 'Emily Brown',
-                        rating: 4.9,
-                        reviews: 150,
-                        price: 60,
-                        imageUrl: 'https://placehold.co/400x200/EEE/31343C'
-                    },
-                    {
-                        title: 'I will provide professional voice over',
-                        seller: 'David Johnson',
-                        rating: 4.7,
-                        reviews: 80,
-                        price: 40,
-                        imageUrl: 'https://placehold.co/400x200/EEE/31343C'
-                    },
-                    {
-                        title: 'I will build a custom e-commerce store',
-                        seller: 'Michael Lee',
-                        rating: 5,
-                        reviews: 200,
-                        price: 150,
-                        imageUrl: 'https://placehold.co/400x200/EEE/31343C'
-                    }
-                ];
-                return gigs;
-            }
-
-            // Simulate fetching testimonials data
-            function fetchTestimonials() {
-                const testimonials = [
-                    {
-                        quote: "I found the perfect freelancer for my logo design. The process was smooth and the quality of work was outstanding!",
-                        author: "Michael B."
-                    },
-                    {
-                        quote: "Using Fiverr made it easy to find a skilled web developer. I'm very happy with the final result.",
-                        author: "Jessica L."
-                    },
-                    {
-                        quote: "The writer delivered high-quality articles that exceeded my expectations.  I will definitely use this service again.",
-                        author: "Robert K."
-                    },
-                      {
-                        quote: "I was impressed with the speed and professionalism of the graphic designer.  They captured my brand perfectly.",
-                        author: "Amanda S."
-                    }
-                ];
-                return testimonials;
-            }
-
-            function generateStars(rating) {
-                const fullStars = Math.floor(rating);
-                const halfStar = rating - fullStars >= 0.5;
-                const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-                let stars = '';
-                for (let i = 0; i < fullStars; i++) {
-                    stars += '&#9733;'; // Full star
-                }
-                if (halfStar) {
-                    stars += '&#9732;'; // Half star
-                }
-                for (let i = 0; i < emptyStars; i++) {
-                    stars += '&#9734;'; // Empty star
-                }
-                return stars;
-            }
-
-            let allGigs = fetchGigs(); // Store all gigs
-            renderGigs(allGigs); // Initial render
-
-            let allTestimonials = fetchTestimonials();
-            renderTestimonials(allTestimonials);
-
-            // --- Search Functionality ---
-            searchInput.on('input', function() {
-                const searchTerm = $(this).val().toLowerCase();
-const filteredGigs = allGigs.filter(gig =>
-                    gig.title.toLowerCase().includes(searchTerm) ||
-                    gig.seller.toLowerCase().includes(searchTerm)
-                );
-                renderGigs(filteredGigs);
-            });
-
-            function renderGigs(gigs) {
-                servicesGrid.empty(); // Clear the grid
-                gigs.forEach(gig => {
-                    const gigCard = $('<div class="gig-card"></div>');
-                    gigCard.html(`
-                        <img src="${gig.imageUrl}" alt="${gig.title}" class="gig-image">
-                        <div class="gig-details">
-                            <h3 class="text-xl font-semibold mb-2">${gig.title}</h3>
-                            <p class="text-gray-600 mb-2">Seller: ${gig.seller}</p>
-                            <p class="star-rating mb-2">${generateStars(gig.rating)} (${gig.reviews} reviews)</p>
-                            <p class="text-lg font-bold text-gray-800">Price: $${gig.price}</p>
-                        </div>
-                    `);
-                    servicesGrid.append(gigCard);
-                });
-            }
-
-            function renderTestimonials(testimonials) {
-                testimonialsGrid.empty();
-                testimonials.forEach(testimonial => {
-                    const testimonialCard = $('<div class="card"></div>');
-                    testimonialCard.html(`
-                        <p class="text-gray-700 italic mb-4">"${testimonial.quote}"</p>
-                        <p class="text-gray-800 font-semibold">- ${testimonial.author}</p>
-                    `);
-                    testimonialsGrid.append(testimonialCard);
-                });
-            }
         });
     </script>
 </body>
