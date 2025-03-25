@@ -379,15 +379,22 @@ def purchase_automation():
 
 
 
-@app.route('/dashboard.html')  # Corrected route
+@app.route('/dashboard')
 @login_required
-def dashboard_page():
+def dashboard():
+    """
+    Renders the dashboard page. Now passes user data.
+    """
     user_id = session.get('user_id')
     user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
     if user:
+        if user['role'] != 'seller':
+            return jsonify({'success': False, 'message': 'Access denied: You do not have the required role'}), 403
+        # Fetch gigs created by the user
         gigs = mongo.db.gigs.find({'seller_id': ObjectId(user_id)})
+        # Fetch SaaS automations
         automations = mongo.db.automations.find()
-        return render_template('dashboard.html', user=user, gigs=gigs, automations=automations)
+        return render_template('dashboard.html', user=user, gigs=gigs, automations=automations)  # Pass user and gigs data to the template
     else:
         return redirect(url_for('login'))
     
