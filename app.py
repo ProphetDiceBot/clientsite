@@ -35,8 +35,12 @@ mongo = PyMongo(app)
 
 # --- Stripe Configuration ---
 # IMPORTANT: Set these via environment variables in production
-stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
-stripe_publishable_key = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+# stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+stripe.api_key = "sk_test_51R3gLwG1T0ctSLu4FjRjIa6WiZwhOBTsiqVDyqHq4g8ZZXCtfraHWHEI0k0dkjca2taXElootEvRU6SVBGQWCzlo00QYsiKoHh"
+stripe_api_key = "sk_test_51R3gLwG1T0ctSLu4FjRjIa6WiZwhOBTsiqVDyqHq4g8ZZXCtfraHWHEI0k0dkjca2taXElootEvRU6SVBGQWCzlo00QYsiKoHh"
+# stripe_publishable_key = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+stripe_publishable_key = "pk_test_51R3gLwG1T0ctSLu4x3lTiSbZKfGIe1xNMP1WojfoJpUl9ZmnYZhtCosmczG1UAXsh6YcWoTPRoLBXl4QJ6YK4ysR009oMhAQQS"
+
 
 # --- Database Index Recommendation ---
 # For improved query performance, consider creating indexes in your MongoDB shell:
