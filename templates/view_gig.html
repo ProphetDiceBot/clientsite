@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Gig</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Add custom styles here */
+        .header {
+            background: linear-gradient(to right, #1dbf73, #08a462);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .gig-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .gig-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+        .gig-details {
+            padding: 15px;
+        }
+        .star-rating {
+            color: #FFC107;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="header sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="{{ url_for('index') }}" class="text-white text-2xl font-bold font-serif">
+                <span class="text-yellow-400">F</span>iverr
+            </a>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-6">
+                    <li><a href="#services" class="text-white hover:text-gray-200 transition duration-300">Services</a></li>
+                    <li><a href="#how-it-works" class="text-white hover:text-gray-200 transition duration-300">How It Works</a></li>
+                    <li><a href="#testimonials" class="text-white hover:text-gray-200 transition duration-300">Testimonials</a></li>
+                    <li><a href="#login" class="text-white hover:text-gray-200 transition duration-300">Login</a></li>
+                    <li><a href="#signup" class="text-white hover:text-gray-200 transition duration-300">Signup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-16">
+        <div class="gig-card">
+            <img src="{{ gig.image_url }}" alt="{{ gig.title }}" class="gig-image">
+            <div class="gig-details">
+                <h1 class="text-3xl font-semibold mb-4">{{ gig.title }}</h1>
+                <p class="text-gray-700 mb-4">{{ gig.description }}</p>
+                <div class="flex items-center mb-4">
+                    <span class="star-rating">
+                        {% for i in range(0, gig.rating) %}
+                            &#9733;
+                        {% endfor %}
+                        {% for i in range(gig.rating, 5) %}
+                            &#9734;
+                        {% endfor %}
+                    </span>
+                    <span class="ml-2 text-gray-600">({{ gig.review_count }} reviews)</span>
+                </div>
+                <p class="text-gray-900 text-2xl font-bold mb-4">${{ gig.price }}</p>
+                <a href="{{ url_for('purchase_gig', gig_id=gig._id) }}" class="fiverr-button">Purchase</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
